@@ -3,13 +3,74 @@
     <head>
         <title>D3</title>
         <script src="https://d3js.org/d3.v4.min.js"></script>
+        <style>
+            div.content {
+                width : 1010px;
+            }
+        </style>
     </head>
     <body>
-        <svg width="1200", height = "800", style="background: white">
-
-        </svg>
+        <div class="content">
+            <svg id="prod", class="prod", width="500", height = "350", style="background: white">
+            </svg>
+            <svg id="cons", class="cons", width="500", height = "350", style="background: white">
+            </svg>
+            <svg id="total", class="total", width="1004", height = "350", style="background: white">
+            </svg>
+        </div>
         <script type="text/javascript">
-            var svg = d3.select("svg");
+            var prodSvg = d3.select("#prod");
+            var consSvg = d3.select("#cons");
+            var totalSvg = d3.select("#total");
+
+            var prodChart = prodSvg.append('g')
+                .attr('transform', 'translate( 30, 20)');
+            var yScale = d3.scaleLinear()
+                .range([300, 0])
+                .domain([0,100]);
+            prodChart.append('g')
+                .call(d3.axisLeft(yScale));
+
+            var testDomain = ['test1','test2','test3','test4','test5','test6','test7']
+            
+            var xScale = d3.scaleBand()
+                .range([0, 400])
+                .domain(testDomain)
+                .padding(0.2);
+            prodChart.append('g')
+                .attr('transform', 'translate(0, 300)')
+                .call(d3.axisBottom(xScale));
+
+            var consChart = consSvg.append('g')
+                .attr('transform', 'translate( 30, 20)');
+            consChart.append('g')
+                .call(d3.axisLeft(yScale));
+            var consXScale = d3.scaleBand()
+                .range([0, 400])
+                .domain(testDomain)
+                .padding(0.2);
+            consChart.append('g')
+                .attr('transform', 'translate(0, 300)')
+                .call(d3.axisBottom(consXScale));
+
+            var prodCons = totalSvg.append('g')
+                .attr('transform', 'translate( 50, 20)');
+            var totalYScale = d3.scaleLinear()
+                .range([300, 0])
+                .domain([0,5000]);
+            prodCons.append('g')
+                .call(d3.axisLeft(totalYScale));
+            var years = new Array(68);
+            for(var year = 0; year < 69; year++){
+                years[year] = year + 1949;
+            }
+            var totalXScale = d3.scaleBand()
+                .range([0, 900])
+                .domain(years)
+                .padding(0.2);
+            prodCons.append('g')
+                .attr('transform', 'translate(0, 300)')
+                .call(d3.axisBottom(totalXScale));
            
         </script>
     </body>
