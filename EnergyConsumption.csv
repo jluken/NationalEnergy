@@ -1,5 +1,5 @@
-Year,Residential (Primary),Residential (Total),Commercial (Primary),Commercial (Total),Industrial (Primary),Industrial (Total),Transportation (Primary),Transportation (Total), Electric Power (Primary),Energy Consumption Balancing Item,Primary Energy Consumption Total
-1949,4460.434,5599.25,2668.869,3668.816,12633.386,14723.587,7879.509,7990.015,4339.47,-0.165,31981.503
+Year,Residential (Primary),Residential,Commercial (Primary),Commercial,Industrial (Primary),Industrial,Transportation (Primary),Transportation, Electric Power (Primary),Energy Consumption Balancing Item,Total Energy
+1949,4460.434,5599.25,2668.869,3668.816,12633.386,14723.587,7879.509,7990.015,4339.47,-0.165,31981.503 
 1950,4829.337,5988.553,2834.094,3893.298,13889.626,16241.423,8383.407,8492.473,4679.283,0.021,34615.768
 1951,5104.476,6380.193,2737.684,3873.226,15127.368,17678.532,8933.484,9041.892,5070.83,0.188,36974.03
 1952,5158.193,6560.243,2672.911,3873.385,14671.564,17311.362,8906.891,9002.752,5338.183,0.082,36747.824

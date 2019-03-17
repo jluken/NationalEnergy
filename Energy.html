@@ -23,54 +23,140 @@
             var consSvg = d3.select("#cons");
             var totalSvg = d3.select("#total");
 
-            var prodChart = prodSvg.append('g')
-                .attr('transform', 'translate( 30, 20)');
-            var yScale = d3.scaleLinear()
-                .range([300, 0])
-                .domain([0,100]);
-            prodChart.append('g')
-                .call(d3.axisLeft(yScale));
+            var prodData;
+            d3.csv("EnergyProduction.csv", function(prodData){
+                d3.csv("EnergyConsumption.csv", function(consData){
+                    console.log(prodData[0]);
+                    console.log(consData[0]);
+                    var barHeight = 300;
+                    var barWidth = 400;
 
-            var testDomain = ['test1','test2','test3','test4','test5','test6','test7']
+                    var prodChart = prodSvg.append('g')
+                        .attr('transform', 'translate( 30, 20)');
+                    var yScale = d3.scaleLinear()
+                        .range([barHeight, 0])
+                        .domain([0,100]);
+                    prodChart.append('g')
+                        .call(d3.axisLeft(yScale));
+                    var sources = ['Coal','Natural Gas','Crude Oil','Plant Liquids','Nuclear','Hydro','Geothermal','Solar','Wind','Biomass'];
+                    var xScale = d3.scaleBand()
+                        .range([0, barWidth])
+                        .domain(sources)
+                        .padding(0.2);
+                    prodChart.append('g')
+                        .attr('transform', 'translate(0, 300)')
+                        .call(d3.axisBottom(xScale));
+                    
+                    //copy for updating values
+                    prodChart.selectAll('rect').remove(); //use to get rid of old values
+                    var prodYear = prodData[0];
+                    var prodBars = [prodYear['Coal'], prodYear['Natural Gas'], prodYear['Crude Oil'], 
+                    prodYear['Plant Liquids'], prodYear['Nuclear'], prodYear['Hydroelectric'], prodYear['Geothermal'], 
+                    prodYear['Solar'], prodYear['Wind'], prodYear['Biomass']]
+                    for(var i = 0; i < prodBars.length; i++){
+                        prodBars[i]= prodBars[i] * barHeight / prodYear['Total Energy'];
+                    }
+                    prodChart.selectAll()
+                        .data(prodBars).enter()
+                        .append('rect')
+                        .style('fill', 'blue')
+                        .attr("transform", function (d, i) {
+                            var translate = [barWidth/prodBars.length * i, 0];
+                            return "translate("+ translate +")";
+                        })
+                        .attr('width', barWidth/prodBars.length)
+                        .attr('y', function(d){ return barHeight - d})
+                        .attr('height', function(d) { return d});
+                        
+                    
+                    var consChart = consSvg.append('g')
+                        .attr('transform', 'translate( 30, 20)');
+                    consChart.append('g')
+                        .call(d3.axisLeft(yScale));
+                    var consumers = ['Residential', 'Commercial', 'Industrial', 'Transportation']
+                    var consXScale = d3.scaleBand()
+                        .range([0, 400])
+                        .domain(consumers)
+                        .padding(0.2);
+                    consChart.append('g')
+                        .attr('transform', 'translate(0, 300)')
+                        .call(d3.axisBottom(consXScale));
+
+                    consChart.selectAll('rect').remove();
+                    var consYear = consData[0];
+                    var consBars = [consYear['Residential'], consYear['Commercial'],
+                    consYear['Industrial'], consYear['Transportation']]
+                    for(var i = 0; i < consBars.length; i++){
+                        consBars[i]= consBars[i] * barHeight / consYear['Total Energy'];
+                    }
+                    consChart.selectAll()
+                        .data(consBars).enter()
+                        .append('rect')
+                        .style('fill', 'red')
+                        .attr("transform", function (d, i) {
+                            var translate = [barWidth/consBars.length * i, 0];
+                            return "translate("+ translate +")";
+                        })
+                        .attr('width', barWidth/consBars.length)
+                        .attr('y', function(d){ return barHeight - d})
+                        .attr('height', function(d) { return d});
+
+
+
+                    var prodCons = totalSvg.append('g')
+                        .attr('transform', 'translate( 50, 20)');
+                    var totalYScale = d3.scaleLinear()
+                        .range([barHeight, 0])
+                        .domain([0,100000]);
+                    prodCons.append('g')
+                        .call(d3.axisLeft(totalYScale));
+                    var years = new Array(68);
+                    for(var year = 0; year < 69; year++){
+                        years[year] = year + 1949;
+                    }
+                    var totalXScale = d3.scaleBand()
+                        .range([0, 900])
+                        .domain(years)
+                        .padding(0.2);
+                    prodCons.append('g')
+                        .attr('transform', 'translate(0, 300)')
+                        .call(d3.axisBottom(totalXScale));
+
+                    var x = d3.scaleTime().range([0, 900]);
+                    var y = d3.scaleLinear().range([barHeight, 0]);
+                   
+
+                    var line = d3.line()
+                        .x(function(d) { return x(d['Year'])})
+                        .y(function(d) { return y(d['Total Energy'])});
+
+                    x.domain(d3.extent(prodData, function(d) { return d['Year']; }));
+                    y.domain([0, 100000]);
+
+                        
+
+                    prodCons.append("path")
+                        .data([prodData])
+                        .attr("stroke", "blue")
+                        .attr("fill", "none")
+                        .attr("stroke-width", 2)
+                        .attr("d", line);
+
+                    prodCons.append("path")
+                        .data([consData])
+                        .attr("stroke", "red")
+                        .attr("fill", "none")
+                        .attr("stroke-width", 2)
+                        .attr("d", line);
+
+
+                });
+            });
             
-            var xScale = d3.scaleBand()
-                .range([0, 400])
-                .domain(testDomain)
-                .padding(0.2);
-            prodChart.append('g')
-                .attr('transform', 'translate(0, 300)')
-                .call(d3.axisBottom(xScale));
 
-            var consChart = consSvg.append('g')
-                .attr('transform', 'translate( 30, 20)');
-            consChart.append('g')
-                .call(d3.axisLeft(yScale));
-            var consXScale = d3.scaleBand()
-                .range([0, 400])
-                .domain(testDomain)
-                .padding(0.2);
-            consChart.append('g')
-                .attr('transform', 'translate(0, 300)')
-                .call(d3.axisBottom(consXScale));
+            
 
-            var prodCons = totalSvg.append('g')
-                .attr('transform', 'translate( 50, 20)');
-            var totalYScale = d3.scaleLinear()
-                .range([300, 0])
-                .domain([0,5000]);
-            prodCons.append('g')
-                .call(d3.axisLeft(totalYScale));
-            var years = new Array(68);
-            for(var year = 0; year < 69; year++){
-                years[year] = year + 1949;
-            }
-            var totalXScale = d3.scaleBand()
-                .range([0, 900])
-                .domain(years)
-                .padding(0.2);
-            prodCons.append('g')
-                .attr('transform', 'translate(0, 300)')
-                .call(d3.axisBottom(totalXScale));
+            
            
         </script>
     </body>
