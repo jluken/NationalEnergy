@@ -36,6 +36,7 @@
                     var barHeight = 300;
                     var barWidth = 400;
                     var year = 0;
+                    var transition = d3.transition().duration(100);
 
                     var prodChart = prodSvg.append('g')
                         .attr('transform', 'translate( 30, 20)');
@@ -68,6 +69,7 @@
                             .data(prodBars).enter()
                             .append('rect')
                             .style('fill', 'blue')
+                            //.transition(transition)
                             .attr("transform", function (d, i) {
                                 var translate = [barWidth/prodBars.length * i, 0];
                                 return "translate("+ translate +")";
@@ -102,6 +104,7 @@
                             .data(consBars).enter()
                             .append('rect')
                             .style('fill', 'red')
+                            //.transition(transition)
                             .attr("transform", function (d, i) {
                                 var translate = [barWidth/consBars.length * i, 0];
                                 return "translate("+ translate +")";
@@ -166,11 +169,9 @@
 
                     var hover = totalSvg.append("g");
 
-                    hover.append("circle")
-                        .attr("r", 3);
-
                     hover.append("text")
-                        .attr("x", 5)
+                        .attr("x", 0)
+                        .attr("y", 0)
                         .attr("dy", ".31em");
 
 
@@ -183,14 +184,20 @@
                     }
 
                     function updateHover() {
-                        var mouse = d3.mous(this);
+                        var mouse = d3.mouse(this);
                         var mouseX = ((mouse[0]-50)/900.0 * 68);
                         year = Math.min(Math.round(mouseX), 68);
-                        hover.attr("transform", "translate(500, 500)");
-                        hover.select("text").text(year + " " + prodData[year] + " " + consData[year]);
+                        hover.style("display", null);
+                        hover.attr("transform", "translate(" + (mouse[0] + 10) + ", " + mouse[1]+ ")");
+                        hover.select("text").text((year + 1949) + " " + prodData[year]['Total Energy'] + " " + consData[year]['Total Energy']);
+                    }
+
+                    function clearHover() {
+                        hover.style("display", "none");
                     }
                     totalSvg.on('click', updateUpper);
                     totalSvg.on('mousemove', updateHover);
+                    totalSvg.on('mouseout', clearHover)
                 };
 
             
