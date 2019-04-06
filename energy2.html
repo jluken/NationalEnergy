@@ -10,6 +10,16 @@
             div.content {
                 width : 1010px;
             }
+
+            div.tooltip {   
+                position: absolute;         
+                text-align: center;         
+                width: 75px;                    
+                height: 75px;                               
+                font: 12px sans-serif;      
+                background: lightsteelblue;         
+                pointer-events: none;   
+            }
         </style>
     </head>
     <body>
@@ -21,6 +31,8 @@
             <svg id="total", class="total", width="1004", height = "350", style="background: white">
             </svg>
         </div>
+
+
         <script type="text/javascript">
             var prodSvg = d3.select("#prod");
             var consSvg = d3.select("#cons");
@@ -173,37 +185,44 @@
                         .attr("stroke-width", 2)
                         .attr("d", line);
 
-                    var hover = totalSvg.append("g");
-
-                    hover.append("text")
-                        .attr("x", 0)
-                        .attr("y", 0)
-                        .attr("dy", ".31em");
-
+                    var div = d3.select("body").append("div")
+                        .attr("class", "tooltip")
+                        .style("opacity",0);
 
                     function updateUpper() {
                         var mouse = d3.mouse(this);
                         console.log(mouse);
                         var mouseX = ((mouse[0]-50)/900.0 * 68);   
                         year = Math.min(Math.round(mouseX), 68);
+                        
                         update();
+
                     }
 
                     function updateHover() {
                         var mouse = d3.mouse(this);
                         var mouseX = ((mouse[0]-50)/900.0 * 68);
                         year = Math.min(Math.round(mouseX), 68);
-                        hover.style("display", null);
-                        hover.attr("transform", "translate(" + (mouse[0] + 10) + ", " + mouse[1]+ ")");
-                        hover.select("text").text((year + 1949) + " " + prodData[year]['Total Energy'] + " " + consData[year]['Total Energy']);
+                        div.html((year+1949) + "\n" + "Production: " + prodData[year]['Total Energy'] + "\n" + "Consumption: " + consData[year]['Total Energy'])
+                            .style("left", (mouse[0] + 10) + "px")
+                            .style("top", (mouse[1] + 325) + "px");
                     }
 
                     function clearHover() {
-                        hover.style("display", "none");
+                        div.transition()
+                            .duration(100)
+                            .style("opacity", 0);
+                    }
+
+                    function showHover() {
+                        div.transition()
+                            .duration(100)
+                            .style("opacity", .9);
                     }
                     totalSvg.on('click', updateUpper);
                     totalSvg.on('mousemove', updateHover);
                     totalSvg.on('mouseout', clearHover)
+                    totalSvg.on('mouseover', showHover);
                 };
 
             
