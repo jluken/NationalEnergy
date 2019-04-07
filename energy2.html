@@ -54,7 +54,7 @@
                     var transition = d3.transition().duration(100);
 
                     var prodChart = prodSvg.append('g')
-                        .attr('transform', 'translate( 30, 20)');
+                        .attr('transform', 'translate( 50, 20)');
                     var yScale = d3.scaleLinear()
                         .range([barHeight, 0])
                         .domain([0,100]);
@@ -69,6 +69,27 @@
                     prodChart.append('g')
                         .attr('transform', 'translate(0, 300)')
                         .call(d3.axisBottom(xScale));
+
+                    prodSvg.append("text")
+                        .attr('x',-200)
+                        .attr("y", 20)
+                        .attr("transform", "rotate(-90)")
+                        .attr("font-family", "arial")
+                        .text("% of total");
+
+                    prodSvg.append("text")
+                        .attr('id', 'prodTitle')
+                        .attr('x', 130)
+                        .attr("y", 50)
+                        .attr("font-family", "arial")
+                        .text("Energy Production by Source (1949)");
+
+                    prodSvg.append("text")
+                        .attr('id', 'prodTotal')
+                        .attr('x', 165)
+                        .attr("y", 75)
+                        .attr("font-family", "arial")
+                        .text("Total: " + prodData[0]['Total Energy'] + " Trillion BTU");
                     
 
                     function updateProd () {
@@ -94,10 +115,15 @@
                             .attr('width', barWidth/prodBars.length)
                             .attr('y', function(d){ return barHeight - d})
                             .attr('height', function(d) { return d});
+
+                        var title = "Energy Production by Source (" + (1949 + year) + ")";
+                        d3.select("#prodTitle").text(title);
+                        var total = "Total: " + prodYear['Total Energy'] + " Trillion BTU"
+                        d3.select("#prodTotal").text(total);
                         
                     }
                     var consChart = consSvg.append('g')
-                        .attr('transform', 'translate( 30, 20)');
+                        .attr('transform', 'translate( 50, 20)');
                     consChart.append('g')
                         .call(d3.axisLeft(yScale));
                     var consumers = ['Residential', 'Commercial', 'Industrial', 'Transportation']
@@ -108,6 +134,27 @@
                     consChart.append('g')
                         .attr('transform', 'translate(0, 300)')
                         .call(d3.axisBottom(consXScale));
+
+                    consSvg.append("text")
+                        .attr('x',-200)
+                        .attr("y", 20)
+                        .attr("transform", "rotate(-90)")
+                        .attr("font-family", "arial")
+                        .text("% of total");
+
+                    consSvg.append("text")
+                        .attr('id', 'consTitle')
+                        .attr('x', 130)
+                        .attr("y", 50)
+                        .attr("font-family", "arial")
+                        .text("Energy Consumption by Source (1949)");
+
+                    consSvg.append("text")
+                        .attr('id', 'consTotal')
+                        .attr('x', 165)
+                        .attr("y", 75)
+                        .attr("font-family", "arial")
+                        .text("Total: " + consData[0]['Total Energy'] + " Trillion BTU");
 
                     function updateCons () {
                         consChart.selectAll('rect').remove();
@@ -130,6 +177,11 @@
                             .attr('width', barWidth/consBars.length)
                             .attr('y', function(d){ return barHeight - d})
                             .attr('height', function(d) { return d});
+
+                        var title = "Energy Consumption by Source (" + (1949 + year) + ")";
+                        d3.select("#consTitle").text(title);
+                        var total = "Total: " + consYear['Total Energy'] + " Trillion BTU"
+                        d3.select("#consTotal").text(total);
                     }
                     function update() {
                         updateProd();
@@ -139,7 +191,7 @@
                     update();
 
                     var prodCons = totalSvg.append('g')
-                        .attr('transform', 'translate( 50, 20)');
+                        .attr('transform', 'translate( 70, 20)');
                     var totalYScale = d3.scaleLinear()
                         .range([barHeight, 0])
                         .domain([0,100000]);
@@ -184,6 +236,48 @@
                         .attr("fill", "none")
                         .attr("stroke-width", 2)
                         .attr("d", line);
+
+                    totalSvg.append("text")
+                        .attr("x", 510)
+                        .attr("y", 347)
+                        .attr("font-family", "arial")
+                        .text("year");
+
+                    totalSvg.append("text")
+                        .attr('x',-200)
+                        .attr("y", 20)
+                        .attr("transform", "rotate(-90)")
+                        .attr("font-family", "arial")
+                        .text("BTU (trillions)");
+
+                    totalSvg.append("text")
+                        .attr("x", 800)
+                        .attr("y", 230)
+                        .attr("font-family", "arial")
+                        .attr("font-size", 14)
+                        .text("US Energy Production");
+
+                    totalSvg.append("rect")
+                        .attr("x", 780)
+                        .attr("y", 218)
+                        .attr("width", 14)
+                        .attr("height", 14)
+                        .attr("fill", "blue");
+
+                    totalSvg.append("text")
+                        .attr("x", 800)
+                        .attr("y", 260)
+                        .attr("font-family", "arial")
+                        .attr("font-size", 14)
+                        .text("US Energy Consumption");
+
+                    totalSvg.append("rect")
+                        .attr("x", 780)
+                        .attr("y", 248)
+                        .attr("width", 14)
+                        .attr("height", 14)
+                        .attr("fill", "red");
+                    
 
                     var div = d3.select("body").append("div")
                         .attr("class", "tooltip")
