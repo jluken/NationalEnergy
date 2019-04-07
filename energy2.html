@@ -122,6 +122,9 @@
                         d3.select("#prodTotal").text(total);
                         
                     }
+
+
+
                     var consChart = consSvg.append('g')
                         .attr('transform', 'translate( 50, 20)');
                     consChart.append('g')
@@ -283,6 +286,8 @@
                         .attr("class", "tooltip")
                         .style("opacity",0);
 
+
+
                     function updateUpper() {
                         var mouse = d3.mouse(this);
                         console.log(mouse);
@@ -290,6 +295,14 @@
                         year = Math.min(Math.round(mouseX), 68);
                         
                         update();
+                        totalSvg.selectAll("rect").remove();
+                        var rectangle = totalSvg.append("rect")
+                            .attr("x", (Math.floor(900/68))*year + 50)
+                            .attr("y", 20)
+                            .attr("width", (900/68))
+                            .attr("height", 300)
+                            .style("opacity", .5)
+                            .style("fill", "#e6e7e8");
 
                     }
 
@@ -297,7 +310,7 @@
                         var mouse = d3.mouse(this);
                         var mouseX = ((mouse[0]-50)/900.0 * 68);
                         year = Math.min(Math.round(mouseX), 68);
-                        div.html((year+1949) + "\n" + "Production: " + prodData[year]['Total Energy'] + "\n" + "Consumption: " + consData[year]['Total Energy'])
+                        div.html((year+1947) + "\n" + "Production: " + prodData[year]['Total Energy'] + "\n" + "Consumption: " + consData[year]['Total Energy'])
                             .style("left", (mouse[0] + 10) + "px")
                             .style("top", (mouse[1] + 325) + "px");
                     }
