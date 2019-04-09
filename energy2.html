@@ -61,7 +61,7 @@
                     prodChart.append('g')
                         .call(d3.axisLeft(yScale));
                     //var sources = ['Coal','Natural Gas','Crude Oil','Plant Liquids','Nuclear','Hydro','Geothermal','Solar','Wind','Biomass'];
-                    var sources = ['Coal', 'Gas', 'Oil', 'Petroleum', 'Nuclear', 'Hydro', 'Geo', 'Solar', 'Wind', 'Biomass'];
+                    var sources = ['Coal', 'Gas', 'Oil', 'Biofuel', 'Nuclear', 'Hydro', 'Geo', 'Solar', 'Wind', 'Biomass'];
                     var xScale = d3.scaleBand()
                         .range([0, barWidth])
                         .domain(sources)
@@ -114,7 +114,9 @@
                             })
                             .attr('width', barWidth/prodBars.length)
                             .attr('y', function(d){ return barHeight - d})
-                            .attr('height', function(d) { return d});
+                            .attr('height', function(d) { return d})
+                            .on("mouseover", showupleft())
+                            .on("mouseout", hideupleft());
 
                         var title = "Energy Production by Source (" + (1949 + year) + ")";
                         d3.select("#prodTitle").text(title);
@@ -123,6 +125,22 @@
                         
                     }
 
+                    var upleft = d3.select("body").append("div")
+                        .attr("class", "tooltip")
+                        .style("opacity",0);
+
+                    function showupleft() {
+
+                        upleft.transition()
+                            .duration(100)
+                            .style("opacity", .9);
+                    }
+
+                    function hideupleft() {
+                        upleft.transition()
+                            .duration(100)
+                            .style("opacity", 0);
+                    }
 
 
                     var consChart = consSvg.append('g')
@@ -180,8 +198,7 @@
                             .attr('width', barWidth/consBars.length)
                             .attr('y', function(d){ return barHeight - d})
                             .attr('height', function(d) { return d});
-
-                        var title = "Energy Consumption by Source (" + (1949 + year) + ")";
+                        var title = "Energy Consumption by Source (" + (1948 + year) + ")";
                         d3.select("#consTitle").text(title);
                         var total = "Total: " + consYear['Total Energy'] + " Trillion BTU"
                         d3.select("#consTotal").text(total);
@@ -223,8 +240,6 @@
 
                     x.domain(d3.extent(prodData, function(d) { return d['Year']; }));
                     y.domain([0, 100000]);
-
-                        
 
                     prodCons.append("path")
                         .data([prodData])
@@ -290,27 +305,31 @@
 
                     function updateUpper() {
                         var mouse = d3.mouse(this);
-                        console.log(mouse);
-                        var mouseX = ((mouse[0]-50)/900.0 * 68);   
-                        year = Math.min(Math.round(mouseX), 68);
-                        
+
+                        var mouseX = ((mouse[0]-70) * 69.0 /900.0);
+                        console.log("mousex: ", mouseX);  
+                        year = Math.min(Math.floor(mouseX), 69);
+                        console.log("mouse: ", mouse);
+                        console.log("year: ", year);
                         update();
-                        totalSvg.selectAll("rect").remove();
+                        totalSvg.selectAll("rect.highlight").remove();
                         var rectangle = totalSvg.append("rect")
-                            .attr("x", (Math.floor(900/68))*year + 50)
+                            .attr("class", "highlight")
+                            //.attr("x", (Math.floor((900.0/68.0))*year + (70)))
+                            .attr("x", ((900.0/69.0))*year + (70))
                             .attr("y", 20)
-                            .attr("width", (900/68))
+                            .attr("width", (900.0/69.0))
                             .attr("height", 300)
                             .style("opacity", .5)
-                            .style("fill", "#e6e7e8");
+                            .style("fill", "#a9a9a9");
 
                     }
 
                     function updateHover() {
                         var mouse = d3.mouse(this);
-                        var mouseX = ((mouse[0]-50)/900.0 * 68);
-                        year = Math.min(Math.round(mouseX), 68);
-                        div.html((year+1947) + "\n" + "Production: " + prodData[year]['Total Energy'] + "\n" + "Consumption: " + consData[year]['Total Energy'])
+                        var mouseX = ((mouse[0]-70) * 69.0 / 900.0);
+                        year = Math.min(Math.floor(mouseX), 69);
+                        div.html((year+1949) + "\n" + "Production: " + prodData[year]['Total Energy'] + "\n" + "Consumption: " + consData[year]['Total Energy'])
                             .style("left", (mouse[0] + 10) + "px")
                             .style("top", (mouse[1] + 325) + "px");
                     }
