@@ -53,6 +53,13 @@
                     var year = 0;
                     var transition = d3.transition().duration(100);
 
+                    var pastBars = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    var pastCons = [0, 0, 0, 0];
+
+                    var oldX = 0;
+                    var oldHeight = 0;
+
+                    
                     var prodChart = prodSvg.append('g')
                         .attr('transform', 'translate( 50, 20)');
                     var yScale = d3.scaleLinear()
@@ -97,15 +104,19 @@
                         prodChart.selectAll('rect').remove(); //use to get rid of old values
                         var prodYear = prodData[year];
                         var colors = d3.scaleOrdinal(d3.schemeRdYlGn[10]);
+                        var pastColors = d3.scaleOrdinal(d3.schemeRdYlGn[10]);
                         var prodBars = [prodYear['Coal'], prodYear['Natural Gas'], prodYear['Crude Oil'], 
                         prodYear['Plant Liquids'], prodYear['Nuclear'], prodYear['Hydroelectric'], prodYear['Geothermal'], 
                         prodYear['Solar'], prodYear['Wind'], prodYear['Biomass']]
+
                         for(var i = 0; i < prodBars.length; i++){
+                            
                             prodBars[i]= prodBars[i] * barHeight / prodYear['Total Energy'];
                         }
                         prodChart.selectAll()
                             .data(prodBars).enter()
                             .append('rect')
+                            .attr("class", "prodNew")
                             .style('fill', colors)
                             //.transition(transition)
                             .attr("transform", function (d, i) {
@@ -117,7 +128,25 @@
                             .attr('height', function(d) { return d})
                             .on("mouseover", showupleft())
                             .on("mouseout", hideupleft());
-
+                        prodChart.selectAll()
+                            .data(pastBars).enter()
+                            .append('rect')
+                            .attr("class", "prodOld")
+                            .attr('fill', 'transparent')
+                            .style("stroke", 'black')
+                            .style("outline", "1px")
+                            .attr("transform", function (d, i) {
+                                var translate = [barWidth/pastBars.length * i, 0];
+                                return "translate("+ translate +")";
+                            })
+                            .attr('width', barWidth/pastBars.length)
+                            .attr('y', function(f){ return barHeight - f})
+                            .attr('height', function(f) { return f})
+                            .on("mouseover", showupleft())
+                            .on("mouseout", hideupleft());
+                        for(var i = 0; i < pastBars.length; i++){
+                            pastBars[i] = prodBars[i];
+                        }
                         var title = "Energy Production by Source (" + (1949 + year) + ")";
                         d3.select("#prodTitle").text(title);
                         var total = "Total: " + prodYear['Total Energy'] + " Trillion BTU"
@@ -189,6 +218,7 @@
                         consChart.selectAll()
                             .data(consBars).enter()
                             .append('rect')
+                            .attr("class", "consNew")
                             .style('fill', consColors)
                             //.transition(transition)
                             .attr("transform", function (d, i) {
@@ -198,6 +228,24 @@
                             .attr('width', barWidth/consBars.length)
                             .attr('y', function(d){ return barHeight - d})
                             .attr('height', function(d) { return d});
+                        consChart.selectAll()
+                            .data(pastCons).enter()
+                            .append('rect')
+                            .attr("class", "consOld") 
+                            .attr('fill', 'transparent')
+                            .style("stroke", 'black')
+                            .style("outline", "1px")
+                            .attr("transform", function (d, i) {
+                                var translate = [barWidth/pastCons.length * i, 0];
+                                return "translate("+ translate +")";
+                            })
+                            .attr('width', barWidth/pastCons.length)
+                            .attr('y', function(d){ return barHeight - d})
+                            .attr('height', function(d) { return d});
+
+                        for(var i = 0; i < pastCons.length; i++){
+                            pastCons[i] = consBars[i];
+                        }
                         var title = "Energy Consumption by Source (" + (1948 + year) + ")";
                         d3.select("#consTitle").text(title);
                         var total = "Total: " + consYear['Total Energy'] + " Trillion BTU"
@@ -312,16 +360,29 @@
                         console.log("mouse: ", mouse);
                         console.log("year: ", year);
                         update();
+
+                        totalSvg.selectAll("rect.oldHighlight").remove();
+                        var oldRect = totalSvg.append("rect")
+                            .attr("class", "oldHighlight")
+                            .attr("x", oldX)
+                            .attr("y", 20)
+                            .attr("width", (900.0/69.0))
+                            .attr("height", oldHeight)
+                            .attr("fill", "transparent")
+                            .style("outline", "1px solid black");
+
                         totalSvg.selectAll("rect.highlight").remove();
                         var rectangle = totalSvg.append("rect")
                             .attr("class", "highlight")
-                            //.attr("x", (Math.floor((900.0/68.0))*year + (70)))
                             .attr("x", ((900.0/69.0))*year + (70))
                             .attr("y", 20)
                             .attr("width", (900.0/69.0))
                             .attr("height", 300)
                             .style("opacity", .5)
                             .style("fill", "#a9a9a9");
+                        oldX = ((900.0/69.0))*year + (70);
+                        oldHeight = 300;
+
 
                     }
 
