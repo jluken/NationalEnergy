@@ -309,6 +309,18 @@
                         .attr("width", 14)
                         .attr("height", 14)
                         .attr("fill", "red");
+
+                    year = 0;
+                    var rectangle = totalSvg.append("rect")
+                            .attr("class", "highlight")
+                            .attr("x", ((900.0/69.0))*year + (70))
+                            .attr("y", 20)
+                            .attr("width", (900.0/69.0))
+                            .attr("height", 300)
+                            .style("opacity", .5)
+                            .style("fill", "#a9a9a9");
+                    oldX = ((900.0/69.0))*year + (70);
+                    oldHeight = 300;
                     
                     var div = d3.select("body").append("div")
                         .attr("class", "tooltip")
