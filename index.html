@@ -121,7 +121,7 @@
                             .append('rect')
                             .attr("class", "prodOld")
                             .attr('fill', 'transparent')
-                            .style("stroke", 'black')
+                            .style("stroke", 'grey')
                             .style("outline", "1px")
                             .attr("transform", function (d, i) {
                                 var translate = [barWidth/pastBars.length * i, 0];
@@ -211,7 +211,7 @@
                             .append('rect')
                             .attr("class", "consOld") 
                             .attr('fill', 'transparent')
-                            .style("stroke", 'black')
+                            .style("stroke", 'grey')
                             .style("outline", "1px")
                             .attr("transform", function (d, i) {
                                 var translate = [barWidth/pastCons.length * i, 0];
@@ -223,14 +223,16 @@
                         for(var i = 0; i < pastCons.length; i++){
                             pastCons[i] = consBars[i];
                         }
-                        var title = "Energy Consumption by Source (" + (1948 + year) + ")";
+                        var title = "Energy Consumption by Source (" + (1949 + year) + ")";
                         d3.select("#consTitle").text(title);
                         var total = "Total: " + consYear['Total Energy'] + " Trillion BTU"
                         d3.select("#consTotal").text(total);
                     }
                     function update() {
-                        updateProd();
-                        updateCons();
+                        if(-1 < year && year < 69){
+                            updateProd();
+                            updateCons();
+                        }
                     }
                     update();
                     var prodCons = totalSvg.append('g')
@@ -316,37 +318,41 @@
                         var mouseX = ((mouse[0]-70) * 69.0 /900.0);
                         console.log("mousex: ", mouseX);  
                         year = Math.min(Math.floor(mouseX), 69);
-                        console.log("mouse: ", mouse);
-                        console.log("year: ", year);
-                        update();
-                        totalSvg.selectAll("rect.oldHighlight").remove();
-                        var oldRect = totalSvg.append("rect")
-                            .attr("class", "oldHighlight")
-                            .attr("x", oldX)
-                            .attr("y", 20)
-                            .attr("width", (900.0/69.0))
-                            .attr("height", oldHeight)
-                            .attr("fill", "transparent")
-                            .style("outline", "1px solid black");
-                        totalSvg.selectAll("rect.highlight").remove();
-                        var rectangle = totalSvg.append("rect")
-                            .attr("class", "highlight")
-                            .attr("x", ((900.0/69.0))*year + (70))
-                            .attr("y", 20)
-                            .attr("width", (900.0/69.0))
-                            .attr("height", 300)
-                            .style("opacity", .5)
-                            .style("fill", "#a9a9a9");
-                        oldX = ((900.0/69.0))*year + (70);
-                        oldHeight = 300;
+                        if(-1 < year && year < 69){
+                            console.log("mouse: ", mouse);
+                            console.log("year: ", year);
+                            update();
+                            totalSvg.selectAll("rect.oldHighlight").remove();
+                            var oldRect = totalSvg.append("rect")
+                                .attr("class", "oldHighlight")
+                                .attr("x", oldX)
+                                .attr("y", 20)
+                                .attr("width", (900.0/69.0))
+                                .attr("height", oldHeight)
+                                .attr("fill", "transparent")
+                                .style("outline", "1px solid grey");
+                            totalSvg.selectAll("rect.highlight").remove();
+                            var rectangle = totalSvg.append("rect")
+                                .attr("class", "highlight")
+                                .attr("x", ((900.0/69.0))*year + (70))
+                                .attr("y", 20)
+                                .attr("width", (900.0/69.0))
+                                .attr("height", 300)
+                                .style("opacity", .5)
+                                .style("fill", "#a9a9a9");
+                            oldX = ((900.0/69.0))*year + (70);
+                            oldHeight = 300;
+                        }
                     }
                     function updateHover() {
                         var mouse = d3.mouse(this);
                         var mouseX = ((mouse[0]-70) * 69.0 / 900.0);
                         year = Math.min(Math.floor(mouseX), 69);
-                        div.html((year+1949) + "\n" + "Production: " + prodData[year]['Total Energy'] + "\n" + "Consumption: " + consData[year]['Total Energy'])
-                            .style("left", (mouse[0] + 10) + "px")
-                            .style("top", (mouse[1] + 325) + "px");
+                        if(-1 < year && year < 69){
+                            div.html((year+1949) + "\n" + "Production: " + prodData[year]['Total Energy'] + "\n" + "Consumption: " + consData[year]['Total Energy'])
+                                .style("left", (mouse[0] + 10) + "px")
+                                .style("top", (mouse[1] + 325) + "px");
+                        }
                     }
                     function clearHover() {
                         div.transition()
