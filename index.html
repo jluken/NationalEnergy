@@ -245,6 +245,7 @@
                         d3.select("#consTotal").text(total);
                     }
                     function update() {
+                        console.log("year...", year);
                         if(-1 < year && year < 69){
                             updateProd();
                             updateCons();
@@ -344,7 +345,7 @@
 
                     textBox.append("text")
                         .attr("x", 40)
-                        .attr("y", 100)
+                        .attr("y", 112)
                         .attr("font-family", "arial")
                         .attr("font-size", 14)
                         .attr("opacity", 1)
@@ -353,7 +354,7 @@
 
                     textBox.append("text")
                         .attr("x", 40)
-                        .attr("y", 130)
+                        .attr("y", 142)
                         .attr("font-family", "arial")
                         .attr("font-size", 14)
                         .attr("opacity", 1)
@@ -383,6 +384,7 @@
                         if(-1 < year && year < 69){
                             console.log("mouse: ", mouse);
                             console.log("year: ", year);
+                            update();
                             d3.select("body").selectAll(".staticTooltip").remove();
                             
                             var div2 = d3.select("body").append("div")
@@ -399,7 +401,7 @@
                                 .attr("width", (900.0/69.0))
                                 .attr("height", oldHeight)
                                 .attr("fill", "transparent")
-                                .style("outline", "1px solid black");
+                                .style("outline", "1px solid grey");
 
                             d3.select("body").selectAll(".oldTooltip").remove();
 
