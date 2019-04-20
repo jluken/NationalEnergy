@@ -8,7 +8,7 @@
         <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
         <style>
             div.content {
-                width : 1010px;
+                width : 1600px;
             }
             div.tooltip {   
                 position: absolute;         
@@ -19,6 +19,28 @@
                 background: lightsteelblue;         
                 pointer-events: none;   
             }
+
+            div.staticTooltip {   
+                position: absolute;         
+                text-align: center;         
+                width: 75px;                    
+                height: 75px;                               
+                font: 12px sans-serif;      
+                background: #c9c9c9;         
+                pointer-events: none;   
+            }
+
+            div.oldTooltip {   
+                position: absolute;         
+                text-align: center;         
+                width: 75px;                    
+                height: 75px;                               
+                font: 12px sans-serif;      
+                background: none;         
+                pointer-events: none;
+                outline: 3px;   
+                stroke: black;
+            }
         </style>
     </head>
     <body>
@@ -27,7 +49,11 @@
             </svg>
             <svg id="cons", class="cons", width="500", height = "350", style="background: white">
             </svg>
+            <svg id="upperText", class="text", width="500", height="350", style="background: white">
+            </svg>
             <svg id="total", class="total", width="1004", height = "350", style="background: white">
+            </svg>
+            <svg id="lowerText", class="text", width="500", height="350", style="background: white">
             </svg>
         </div>
 
@@ -36,6 +62,9 @@
             var prodSvg = d3.select("#prod");
             var consSvg = d3.select("#cons");
             var totalSvg = d3.select("#total");
+            var textSvg = d3.select("#lowerText");
+            var expSvg = d3.select("#upperText");
+
             var prodData;
             d3.queue()
                 .defer(d3.csv, "EnergyProduction.csv")
@@ -52,7 +81,9 @@
                     var pastCons = [0, 0, 0, 0];
                     var oldX = 0;
                     var oldHeight = 0;
-                    
+                    var oldYear = 0;
+
+
                     var prodChart = prodSvg.append('g')
                         .attr('transform', 'translate( 50, 20)');
                     var yScale = d3.scaleLinear()
@@ -93,12 +124,10 @@
                         prodChart.selectAll('rect').remove(); //use to get rid of old values
                         var prodYear = prodData[year];
                         var colors = d3.scaleOrdinal(d3.schemeRdYlGn[10]);
-                        var pastColors = d3.scaleOrdinal(d3.schemeRdYlGn[10]);
                         var prodBars = [prodYear['Coal'], prodYear['Natural Gas'], prodYear['Crude Oil'], 
                         prodYear['Plant Liquids'], prodYear['Nuclear'], prodYear['Hydroelectric'], prodYear['Geothermal'], 
                         prodYear['Solar'], prodYear['Wind'], prodYear['Biomass']]
                         for(var i = 0; i < prodBars.length; i++){
-                            
                             prodBars[i]= prodBars[i] * barHeight / prodYear['Total Energy'];
                         }
                         prodChart.selectAll()
@@ -107,15 +136,12 @@
                             .attr("class", "prodNew")
                             .style('fill', colors)
                             //.transition(transition)
-                            .attr("transform", function (d, i) {
-                                var translate = [barWidth/prodBars.length * i, 0];
-                                return "translate("+ translate +")";
-                            })
-                            .attr('width', barWidth/prodBars.length)
+                            .attr('x', function(d, i) {return xScale(sources[i])})
+                            .attr('width', xScale.bandwidth())
                             .attr('y', function(d){ return barHeight - d})
                             .attr('height', function(d) { return d})
-                            .on("mouseover", showupleft())
-                            .on("mouseout", hideupleft());
+                            // .on("mouseover", showupleft())
+                            // .on("mouseout", hideupleft());
                         prodChart.selectAll()
                             .data(pastBars).enter()
                             .append('rect')
@@ -123,15 +149,12 @@
                             .attr('fill', 'transparent')
                             .style("stroke", 'grey')
                             .style("outline", "1px")
-                            .attr("transform", function (d, i) {
-                                var translate = [barWidth/pastBars.length * i, 0];
-                                return "translate("+ translate +")";
-                            })
-                            .attr('width', barWidth/pastBars.length)
+                            .attr('x', function(d, i) { return xScale(sources[i])})
+                            .attr('width', xScale.bandwidth())
                             .attr('y', function(f){ return barHeight - f})
                             .attr('height', function(f) { return f})
-                            .on("mouseover", showupleft())
-                            .on("mouseout", hideupleft());
+                            // .on("mouseover", showupleft())
+                            // .on("mouseout", hideupleft());
                         for(var i = 0; i < pastBars.length; i++){
                             pastBars[i] = prodBars[i];
                         }
@@ -139,21 +162,20 @@
                         d3.select("#prodTitle").text(title);
                         var total = "Total: " + prodYear['Total Energy'] + " Trillion BTU"
                         d3.select("#prodTotal").text(total);
-                        
                     }
-                    var upleft = d3.select("body").append("div")
-                        .attr("class", "tooltip")
-                        .style("opacity",0);
-                    function showupleft() {
-                        upleft.transition()
-                            .duration(100)
-                            .style("opacity", .9);
-                    }
-                    function hideupleft() {
-                        upleft.transition()
-                            .duration(100)
-                            .style("opacity", 0);
-                    }
+                    // var upleft = d3.select("body").append("div")
+                    //     .attr("class", "tooltip")
+                    //     .style("opacity",0);
+                    // function showupleft() {
+                    //     upleft.transition()
+                    //         .duration(100)
+                    //         .style("opacity", .9);
+                    // }
+                    // function hideupleft() {
+                    //     upleft.transition()
+                    //         .duration(100)
+                    //         .style("opacity", 0);
+                    // }
                     var consChart = consSvg.append('g')
                         .attr('transform', 'translate( 50, 20)');
                     consChart.append('g')
@@ -199,11 +221,8 @@
                             .attr("class", "consNew")
                             .style('fill', consColors)
                             //.transition(transition)
-                            .attr("transform", function (d, i) {
-                                var translate = [barWidth/consBars.length * i, 0];
-                                return "translate("+ translate +")";
-                            })
-                            .attr('width', barWidth/consBars.length)
+                            .attr("x", function(d, i) { return consXScale(consumers[i]) + 22.5})
+                            .attr('width', xScale.bandwidth())
                             .attr('y', function(d){ return barHeight - d})
                             .attr('height', function(d) { return d});
                         consChart.selectAll()
@@ -213,11 +232,8 @@
                             .attr('fill', 'transparent')
                             .style("stroke", 'grey')
                             .style("outline", "1px")
-                            .attr("transform", function (d, i) {
-                                var translate = [barWidth/pastCons.length * i, 0];
-                                return "translate("+ translate +")";
-                            })
-                            .attr('width', barWidth/pastCons.length)
+                            .attr("x", function(d, i) { return consXScale(consumers[i]) + 22.5})
+                            .attr('width', xScale.bandwidth())
                             .attr('y', function(d){ return barHeight - d})
                             .attr('height', function(d) { return d});
                         for(var i = 0; i < pastCons.length; i++){
@@ -285,30 +301,64 @@
                         .attr("transform", "rotate(-90)")
                         .attr("font-family", "arial")
                         .text("BTU (trillions)");
-                    totalSvg.append("text")
-                        .attr("x", 800)
-                        .attr("y", 230)
-                        .attr("font-family", "arial")
-                        .attr("font-size", 14)
-                        .text("US Energy Production");
-                    totalSvg.append("rect")
-                        .attr("x", 780)
-                        .attr("y", 218)
-                        .attr("width", 14)
-                        .attr("height", 14)
-                        .attr("fill", "blue");
-                    totalSvg.append("text")
-                        .attr("x", 800)
-                        .attr("y", 260)
-                        .attr("font-family", "arial")
-                        .attr("font-size", 14)
-                        .text("US Energy Consumption");
-                    totalSvg.append("rect")
-                        .attr("x", 780)
-                        .attr("y", 248)
+                    // totalSvg.append("text")
+                    //     .attr("x", 800)
+                    //     .attr("y", 230)
+                    //     .attr("font-family", "arial")
+                    //     .attr("font-size", 14)
+                    //     .text("US Energy Production");
+                    // totalSvg.append("rect")
+                    //     .attr("x", 780)
+                    //     .attr("y", 218)
+                    //     .attr("width", 14)
+                    //     .attr("height", 14)
+                    //     .attr("fill", "blue");
+                    // totalSvg.append("text")
+                    //     .attr("x", 800)
+                    //     .attr("y", 260)
+                    //     .attr("font-family", "arial")
+                    //     .attr("font-size", 14)
+                    //     .text("US Energy Consumption");
+                    // totalSvg.append("rect")
+                    //     .attr("x", 780)
+                    //     .attr("y", 248)
+                    //     .attr("width", 14)
+                    //     .attr("height", 14)
+                    //     .attr("fill", "red");
+
+                    var textBox = textSvg.append("g")
+                        .attr('transform', 'translate( 0, 0)');
+                    textBox.append("rect")
+                        .attr("x", 20)
+                        .attr("y", 100)
                         .attr("width", 14)
                         .attr("height", 14)
                         .attr("fill", "red");
+
+                    textBox.append("rect")
+                        .attr("x", 20)
+                        .attr("y", 130)
+                        .attr("width", 14)
+                        .attr("height", 14)
+                        .attr("fill", "blue");
+
+                    textBox.append("text")
+                        .attr("x", 40)
+                        .attr("y", 100)
+                        .attr("font-family", "arial")
+                        .attr("font-size", 14)
+                        .attr("opacity", 1)
+                        .attr("background", "white")
+                        .text("US Energy Consumption");
+
+                    textBox.append("text")
+                        .attr("x", 40)
+                        .attr("y", 130)
+                        .attr("font-family", "arial")
+                        .attr("font-size", 14)
+                        .attr("opacity", 1)
+                        .attr("background", "white")
+                        .text("US Energy Production");
 
                     year = 0;
                     var rectangle = totalSvg.append("rect")
@@ -333,7 +383,14 @@
                         if(-1 < year && year < 69){
                             console.log("mouse: ", mouse);
                             console.log("year: ", year);
-                            update();
+                            d3.select("body").selectAll(".staticTooltip").remove();
+                            
+                            var div2 = d3.select("body").append("div")
+                                .attr("class", "staticTooltip")
+                                .style("opacity", 1);
+
+
+
                             totalSvg.selectAll("rect.oldHighlight").remove();
                             var oldRect = totalSvg.append("rect")
                                 .attr("class", "oldHighlight")
@@ -342,7 +399,18 @@
                                 .attr("width", (900.0/69.0))
                                 .attr("height", oldHeight)
                                 .attr("fill", "transparent")
-                                .style("outline", "1px solid grey");
+                                .style("outline", "1px solid black");
+
+                            d3.select("body").selectAll(".oldTooltip").remove();
+
+                            var div3 = d3.select("body").append("div")
+                                .attr("class", "oldTooltip")
+                                .style("opacity", 1);
+
+                            div3.html((oldYear+1949) + "\n" + "Production: " + prodData[oldYear]['Total Energy'] + "\n" + "Consumption: " + consData[oldYear]['Total Energy'])
+                                .style("left", ((oldX + (900/69.0) + 10)) + "px")
+                                .style("top", (600) + "px");
+
                             totalSvg.selectAll("rect.highlight").remove();
                             var rectangle = totalSvg.append("rect")
                                 .attr("class", "highlight")
@@ -354,6 +422,11 @@
                                 .style("fill", "#a9a9a9");
                             oldX = ((900.0/69.0))*year + (70);
                             oldHeight = 300;
+                            oldYear = year;
+
+                            div2.html((year+1949) + "\n" + "Production: " + prodData[year]['Total Energy'] + "\n" + "Consumption: " + consData[year]['Total Energy'])
+                                .style("left", (((900/69.0))*(year+1) + 80) + "px")
+                                .style("top", (600) + "px");
                         }
                     }
                     function updateHover() {
