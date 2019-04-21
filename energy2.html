@@ -158,8 +158,6 @@
                             .attr('width', xScale.bandwidth())
                             .attr('y', function(d){ return barHeight - d})
                             .attr('height', function(d) { return d})
-                            .on("mouseover", showupleft())
-                            .on("mouseout", hideupleft());
                         prodChart.selectAll()
                             .data(pastBars).enter()
                             .append('rect')
@@ -175,8 +173,6 @@
                             .attr('width', xScale.bandwidth())
                             .attr('y', function(f){ return barHeight - f})
                             .attr('height', function(f) { return f})
-                            .on("mouseover", showupleft())
-                            .on("mouseout", hideupleft());
                         for(var i = 0; i < pastBars.length; i++){
                             pastBars[i] = prodBars[i];
                         }
@@ -189,22 +185,22 @@
                         
                     }
 
-                    var upleft = d3.select("body").append("div")
-                        .attr("class", "tooltip")
-                        .style("opacity",0);
+                    // var upleft = d3.select("body").append("div")
+                    //     .attr("class", "tooltip")
+                    //     .style("opacity",0);
 
-                    function showupleft() {
+                    // function showupleft() {
 
-                        upleft.transition()
-                            .duration(100)
-                            .style("opacity", .9);
-                    }
+                    //     upleft.transition()
+                    //         .duration(100)
+                    //         .style("opacity", .9);
+                    // }
 
-                    function hideupleft() {
-                        upleft.transition()
-                            .duration(100)
-                            .style("opacity", 0);
-                    }
+                    // function hideupleft() {
+                    //     upleft.transition()
+                    //         .duration(100)
+                    //         .style("opacity", 0);
+                    // }
 
 
                     var consChart = consSvg.append('g')
@@ -414,17 +410,107 @@
                         .text("US Energy Production");
 
                     var upperText = expSvg.append("g");
-                    var expString = "The goal of the national energy visualization is to allow readers to be able to not only track the level of energy production and consumption over time, but also find the root causes. By clicking on a specific year to examine it, you are able to see where the energy of that year came from by source, as well as the percentage of energy used up by each consumer. Click on another year and you can compare the two both in terms of total values, and production/consumption break-downs, with the previously selected year being represented by gray outlines. With this tool, it should be much easier to find what the drivers behind our national energy are, and how they change."
+                    var expString = "The goal of the national energy visualization is to allow readers to be able"
+                    var expString2 = "to not only track the level of energy production and consumption over time,"
+                    var expString3 = "but also find the root causes. By clicking on a specific year to examine it,"
+                    var expString4 = "you are able to see where the energy of that year came from by source,"
+                    var expString5 = "as well as the percentage of energy used up by each consumer. "
+                    var expString6 = "Click on another year and you can compare the two both in terms of total values,"
+                    var expString7 = "and production/consumption break-downs, with the previously selected year"
+                    var expString8 = "being represented by gray outlines. With this tool, it should be much easier"
+                    var expString9 = " to find what the drivers behind our national energy are, and how they change."
 
                     upperText.append("text")
                         .attr("class", "wrapText")
                         .attr("x", 20)
-                        .attr("y", 20)
+                        .attr("y", 90)
                         .attr("font-family", "arial")
                         .attr("font-size", 14)
                         .attr("opacity", 1)
                         .attr("background", "white")
                         .text(expString);
+
+                    upperText.append("text")
+                        .attr("class", "wrapText")
+                        .attr("x", 20)
+                        .attr("y", 106)
+                        .attr("font-family", "arial")
+                        .attr("font-size", 14)
+                        .attr("opacity", 1)
+                        .attr("background", "white")
+                        .text(expString2);
+
+                    upperText.append("text")
+                        .attr("class", "wrapText")
+                        .attr("x", 20)
+                        .attr("y", 122)
+                        .attr("font-family", "arial")
+                        .attr("font-size", 14)
+                        .attr("opacity", 1)
+                        .attr("background", "white")
+                        .text(expString3);
+
+                    upperText.append("text")
+                        .attr("class", "wrapText")
+                        .attr("x", 20)
+                        .attr("y", 138)
+                        .attr("font-family", "arial")
+                        .attr("font-size", 14)
+                        .attr("opacity", 1)
+                        .attr("background", "white")
+                        .text(expString4);
+
+                    upperText.append("text")
+                        .attr("class", "wrapText")
+                        .attr("x", 20)
+                        .attr("y", 154)
+                        .attr("font-family", "arial")
+                        .attr("font-size", 14)
+                        .attr("opacity", 1)
+                        .attr("background", "white")
+                        .text(expString5);
+
+                    upperText.append("text")
+                        .attr("class", "wrapText")
+                        .attr("x", 20)
+                        .attr("y", 170)
+                        .attr("font-family", "arial")
+                        .attr("font-size", 14)
+                        .attr("opacity", 1)
+                        .attr("background", "white")
+                        .text(expString6);
+
+                    upperText.append("text")
+                        .attr("class", "wrapText")
+                        .attr("x", 20)
+                        .attr("y", 186)
+                        .attr("font-family", "arial")
+                        .attr("font-size", 14)
+                        .attr("opacity", 1)
+                        .attr("background", "white")
+                        .text(expString7);
+
+                    upperText.append("text")
+                        .attr("class", "wrapText")
+                        .attr("x", 20)
+                        .attr("y", 202)
+                        .attr("font-family", "arial")
+                        .attr("font-size", 14)
+                        .attr("opacity", 1)
+                        .attr("background", "white")
+                        .text(expString8);
+
+                    upperText.append("text")
+                        .attr("class", "wrapText")
+                        .attr("x", 20)
+                        .attr("y", 218)
+                        .attr("font-family", "arial")
+                        .attr("font-size", 14)
+                        .attr("opacity", 1)
+                        .attr("background", "white")
+                        .text(expString9);
+
+
 
                     var div = d3.select("body").append("div")
                         .attr("class", "tooltip")
